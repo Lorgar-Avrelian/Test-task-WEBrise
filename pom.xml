@@ -61,7 +61,7 @@
     </dependencies>
 
     <build>
-        <finalName>webrise-demo</finalName>
+        <finalName>webrise-test-task</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

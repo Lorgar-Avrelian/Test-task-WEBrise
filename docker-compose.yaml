@@ -6,11 +6,11 @@ services:
     image: postgres:17.4
     restart: always
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=postgresdb
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: '123'
+      POSTGRES_DB: 'postgresdb'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d postgresdb" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -19,7 +19,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
   app:
-    container_name: webrise-demo
+    container_name: webrise-test-task
     restart: always
     build:
       context: .
@@ -40,6 +40,6 @@ services:
 # 'docker compose down' - for stopping all containers
 # 'docker compose ps' - to see all running containers
 
-# 'docker build -t webrise-demo .' - for building container
-# 'docker tag webrise-demo lorgaravrelian/webrise-demo' - for naming of the container on Docker Hub
-# 'docker push lorgaravrelian/webrise-demo' - for pushing container to Docker Hub
+# 'docker build -t webrise-test-task .' - for building container
+# 'docker tag webrise-test-task lorgaravrelian/webrise-test-task' - for naming of the container on Docker Hub
+# 'docker push lorgaravrelian/webrise-test-task' - for pushing container to Docker Hub
