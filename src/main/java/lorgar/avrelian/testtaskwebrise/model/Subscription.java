@@ -28,11 +28,9 @@ public class Subscription {
     @Schema(title = "Тариф", description = "Тарифный план", defaultValue = "Тарифный план", minLength = 2, maxLength = 30)
     @Column(name = "tariff", nullable = false, length = 30)
     private String tariff;
-    @Schema(title = "Пользователи", description = "Пользователи подписки", defaultValue = "null", hidden = true)
+    @Schema(title = "Пользователи", description = "Пользователи подписки", defaultValue = "null")
     @ManyToMany
     @JoinTable(name = "users_subscriptions", joinColumns = @JoinColumn(name = "subscriptions_id"), inverseJoinColumns = @JoinColumn(name = "users_id"))
-    @Column(name = "users")
-    @JsonManagedReference
     private List<User> users;
 
     public Subscription() {

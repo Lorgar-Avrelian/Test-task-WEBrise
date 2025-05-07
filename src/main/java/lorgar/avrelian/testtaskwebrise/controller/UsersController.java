@@ -62,7 +62,7 @@ public class UsersController {
         }
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Создать",
             description = "Создание пользователя",

@@ -1,6 +1,6 @@
 package lorgar.avrelian.testtaskwebrise.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -28,10 +28,8 @@ public class User {
     @Schema(title = "Фамилия", description = "Фамилия пользователя", defaultValue = "Фамилия", required = true, minLength = 2, maxLength = 30)
     @Column(name = "surname", nullable = false, length = 30)
     private String surname;
-    @Schema(title = "Подписки", description = "Подписки пользователя", defaultValue = "null", hidden = true)
+    @Schema(title = "Подписки", description = "Подписки пользователя")
     @ManyToMany(mappedBy = "users")
-    @Column(name = "subscriptions")
-    @JsonManagedReference
     private List<Subscription> subscriptions;
 
     public User() {
@@ -77,6 +75,7 @@ public class User {
         this.surname = surname;
     }
 
+    @JsonIgnore
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }

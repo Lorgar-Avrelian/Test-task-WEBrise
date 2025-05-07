@@ -29,7 +29,11 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public User createUser(User user) {
-        User create = usersRepository.save(user);
+        User newUser = new User();
+        newUser.setName(user.getName());
+        newUser.setSurname(user.getSurname());
+        newUser.setLogin(user.getLogin());
+        User create = usersRepository.save(newUser);
         log.debug("Created user : " + create);
         return create;
     }
