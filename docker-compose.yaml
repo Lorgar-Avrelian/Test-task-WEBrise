@@ -1,0 +1,35 @@
+volumes:
+  pg_webrise_demo:
+
+services:
+  postgresdb:
+    image: postgres:17.4
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=postgresdb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d postgresdb" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_webrise_demo:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+  app:
+    container_name: webrise-demo
+    restart: always
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgresdb:5432/postgresdb'
+      SPRING_DATASOURCE_USERNAME: 'admin'
+      SPRING_DATASOURCE_PASSWORD: '123'
+      JAVA_OPTS: '-Xmx512m'

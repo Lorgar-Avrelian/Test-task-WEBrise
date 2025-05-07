@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Test-task-WEBrise</name>
     <description>Test-task-WEBrise</description>
+    <packaging>jar</packaging>
     <url/>
     <licenses>
         <license/>
@@ -40,9 +41,27 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>webrise-demo</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
