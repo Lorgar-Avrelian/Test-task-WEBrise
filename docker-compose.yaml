@@ -33,3 +33,13 @@ services:
       SPRING_DATASOURCE_USERNAME: 'admin'
       SPRING_DATASOURCE_PASSWORD: '123'
       JAVA_OPTS: '-Xmx512m'
+
+
+# 'docker compose up --build' - for building project and first run
+# 'docker compose up -d' - for the second and further runs
+# 'docker compose down' - for stopping all containers
+# 'docker compose ps' - to see all running containers
+
+# 'docker build -t webrise-demo .' - for building container
+# 'docker tag webrise-demo lorgaravrelian/webrise-demo' - for naming of the container on Docker Hub
+# 'docker push lorgaravrelian/webrise-demo' - for pushing container to Docker Hub
