@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * @author Victor Tokovenko
  */
 @Repository
-public interface SubscriptionsDataRepository extends JpaRepository<SubscriptionData, Integer> {
+public interface SubscriptionsDataRepository extends JpaRepository<SubscriptionData, Long> {
 }

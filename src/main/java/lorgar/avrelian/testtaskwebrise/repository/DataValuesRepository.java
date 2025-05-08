@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * @author Victor Tokovenko
  */
 @Repository
-public interface DataValuesRepository extends JpaRepository<DataValues, Integer> {
+public interface DataValuesRepository extends JpaRepository<DataValues, Long> {
 }
