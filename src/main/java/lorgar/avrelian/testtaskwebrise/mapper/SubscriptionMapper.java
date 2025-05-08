@@ -25,13 +25,6 @@ public interface SubscriptionMapper {
     @Mapping(target = "subscriptionData", ignore = true)
     Subscription newSubscriptionDtoToSubscription(NewSubscriptionDTO newSubscriptionDTO);
 
-    @Mapping(target = "id", source = "newSubscriptionDTO.id")
-    @Mapping(target = "title", source = "newSubscriptionDTO.title")
-    @Mapping(target = "description", source = "newSubscriptionDTO.description")
-    @Mapping(target = "tariff", source = "newSubscriptionDTO.tariff")
-    @Mapping(target = "subscriptionData", ignore = true)
-    Subscription subscriptionDtoToSubscription(SubscriptionDTO subscriptionDTO);
-
     default SubscriptionDTO subscriptionToSubscriptionDTO(Subscription subscription, Collection<User> users) {
         SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
         subscriptionDTO.setId(subscription.getId());
@@ -54,6 +47,7 @@ public interface SubscriptionMapper {
         }
         return subscriptionDTO;
     }
+
     @Mapping(target = "id", source = "subscription.id")
     @Mapping(target = "title", source = "subscription.title")
     @Mapping(target = "description", source = "subscription.description")
