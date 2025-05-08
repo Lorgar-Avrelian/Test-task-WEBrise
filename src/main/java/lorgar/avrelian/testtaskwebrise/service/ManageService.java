@@ -6,7 +6,7 @@ import lorgar.avrelian.testtaskwebrise.dao.User;
 import java.util.Collection;
 
 /**
- * Service for managing users subscriptions data
+ * Service for managing subscriptions data of users
  *
  * @author Victor Tokovenko
  */
@@ -19,4 +19,20 @@ public interface ManageService {
      * @throws RuntimeException if no DB connection
      */
     Collection<Subscription> getUserSubscriptions(User user);
+
+    /**
+     * Method for deleting subscriptions data of {@link User}
+     *
+     * @param user current user
+     * @throws RuntimeException if no DB connection
+     */
+    void deleteUser(User user);
+
+    /**
+     * Method for deleting subscriptions data of {@link Subscription}
+     *
+     * @param subscription current subscription
+     * @throws RuntimeException if no DB connection
+     */
+    void deleteSubscription(Subscription subscription);
 }

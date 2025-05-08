@@ -7,6 +7,7 @@ import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,15 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final Logger log = LoggerFactory.getLogger(SubscriptionsServiceImpl.class);
     private final SubscriptionsRepository subscriptionsRepository;
     private final SubscriptionMapper subscriptionMapper;
+    private final ManageService manageService;
 
-    public SubscriptionsServiceImpl(SubscriptionsRepository subscriptionsRepository, SubscriptionMapper subscriptionMapper) {
+    public SubscriptionsServiceImpl(
+            SubscriptionsRepository subscriptionsRepository,
+            SubscriptionMapper subscriptionMapper,
+            @Qualifier(value = "manageServiceImpl") ManageService manageService) {
         this.subscriptionsRepository = subscriptionsRepository;
         this.subscriptionMapper = subscriptionMapper;
+        this.manageService = manageService;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     @Override
     public SubscriptionNoUsers createSubscription(NewSubscriptionDTO subscription) {
         Subscription optional = subscriptionsRepository.findSubscriptionByTitleIgnoreCaseAndTariffIgnoreCase(subscription.getTitle(), subscription.getTariff()).orElse(null);
-        if (optional == null) return null;
+        if (optional != null) return null;
         SubscriptionNoUsers subscriptionNoUsers;
         try {
             subscriptionNoUsers = subscriptionMapper.subscriptionToSubscriptionNoUsers(subscriptionsRepository.save(subscriptionMapper.newSubscriptionDtoToSubscription(subscription)));
@@ -107,5 +113,19 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         return subscriptionMapper.subscriptionToSubscriptionNoUsers(saved);
+    }
+
+    @Override
+    public SubscriptionNoUsers deleteSubscription(Long id) {
+        if (readSubscription(id) == null) return null;
+        Subscription current = subscriptionsRepository.findById(id).get();
+        manageService.deleteSubscription(current);
+        try {
+            subscriptionsRepository.delete(current);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return subscriptionMapper.subscriptionToSubscriptionNoUsers(current);
     }
 }

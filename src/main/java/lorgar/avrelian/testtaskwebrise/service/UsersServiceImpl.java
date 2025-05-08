@@ -125,4 +125,19 @@ public class UsersServiceImpl implements UsersService {
         }
         return userMapper.userToUserDTO(savedUser, manageService.getUserSubscriptions(currentUser));
     }
+
+    @Override
+    public UserDTO deleteUser(Long id) {
+        if (readUser(id) == null) return null;
+        User currentUser = usersRepository.findById(id).get();
+        Collection<Subscription> userSubscriptions = manageService.getUserSubscriptions(currentUser);
+        manageService.deleteUser(currentUser);
+        try {
+            usersRepository.delete(currentUser);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return userMapper.userToUserDTO(currentUser, userSubscriptions);
+    }
 }

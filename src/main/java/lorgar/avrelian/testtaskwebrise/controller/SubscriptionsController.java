@@ -246,4 +246,54 @@ public class SubscriptionsController {
         if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(subscriptionNoUsers);
     }
+
+    @DeleteMapping(path = "/{id}")
+    @Operation(
+            summary = "Удалить",
+            description = "Удалить подписку",
+            tags = "Подписки",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<?> deleteSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
+        log.debug("Received request : DELETE /subscriptions/" + id);
+        if (id <= 0) return ResponseEntity.badRequest().build();
+        SubscriptionNoUsers subscriptionNoUsers;
+        try {
+            subscriptionNoUsers = subscriptionsService.deleteSubscription(id);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
+    }
 }

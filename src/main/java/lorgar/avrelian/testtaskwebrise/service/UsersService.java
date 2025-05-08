@@ -50,7 +50,7 @@ public interface UsersService {
     UserDTO readUser(Long id);
 
     /**
-     * Method for getting user from DB by ID
+     * Method for updating user data at DB by ID
      *
      * @param user {@link NewUserDTO} of a new user
      * @param id   {@link Long} value of user ID
@@ -58,4 +58,12 @@ public interface UsersService {
      * @throws RuntimeException if no DB connection
      */
     UserDTO putUser(Long id, NewUserDTO user);
+    /**
+     * Method for deleting user from DB by ID
+     *
+     * @param id {@link Long} value of user ID
+     * @return {@link UserDTO} of {@link User}
+     * @throws RuntimeException if no DB connection
+     */
+    UserDTO deleteUser(Long id);
 }
