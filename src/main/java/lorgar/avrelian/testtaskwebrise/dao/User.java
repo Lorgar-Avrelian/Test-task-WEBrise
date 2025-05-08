@@ -1,6 +1,6 @@
-package lorgar.avrelian.testtaskwebrise.model;
+package lorgar.avrelian.testtaskwebrise.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -75,7 +75,7 @@ public class User {
         this.surname = surname;
     }
 
-    @JsonIgnore
+    @JsonManagedReference
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }

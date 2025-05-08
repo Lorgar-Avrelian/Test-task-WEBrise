@@ -1,6 +1,6 @@
 package lorgar.avrelian.testtaskwebrise.service;
 
-import lorgar.avrelian.testtaskwebrise.model.User;
+import lorgar.avrelian.testtaskwebrise.dao.User;
 import lorgar.avrelian.testtaskwebrise.repository.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

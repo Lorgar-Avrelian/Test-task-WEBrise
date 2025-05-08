@@ -1,6 +1,6 @@
-package lorgar.avrelian.testtaskwebrise.model;
+package lorgar.avrelian.testtaskwebrise.dao;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -76,6 +76,7 @@ public class Subscription {
         this.tariff = tariff;
     }
 
+    @JsonBackReference
     public List<User> getUsers() {
         return users;
     }
