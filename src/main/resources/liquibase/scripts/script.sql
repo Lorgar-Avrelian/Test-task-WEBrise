@@ -37,7 +37,7 @@ CREATE TABLE data_values
     id              BIGSERIAL,
     subscription_id BIGINT       NOT NULL,
     key             VARCHAR(255) NOT NULL,
-    value           VARCHAR(255),
+    value           TEXT,
     PRIMARY KEY (id),
     FOREIGN KEY (subscription_id) REFERENCES subscription_data (id)
 );

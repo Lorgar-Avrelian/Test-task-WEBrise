@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
-import lorgar.avrelian.testtaskwebrise.service.UsersService;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.service.SubscriptionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,28 +24,28 @@ import java.util.List;
  * @author Victor Tokovenko
  */
 @RestController
-@RequestMapping(path = "/users")
-@Tag(name = "Пользователи", description = "Контроллер для управления данными пользователей")
-public class UsersController {
-    private final Logger log = LoggerFactory.getLogger(UsersController.class);
-    private final UsersService usersService;
+@RequestMapping(path = "/subscriptions")
+@Tag(name = "Подписки", description = "Контроллер для управления данными подписок")
+public class SubscriptionsController {
+    private final Logger log = LoggerFactory.getLogger(SubscriptionsController.class);
+    private final SubscriptionsService subscriptionsService;
 
-    public UsersController(@Qualifier(value = "usersServiceImpl") UsersService usersService) {
-        this.usersService = usersService;
+    public SubscriptionsController(@Qualifier(value = "subscriptionsServiceImpl") SubscriptionsService subscriptionsService) {
+        this.subscriptionsService = subscriptionsService;
     }
 
     @GetMapping
     @Operation(
             summary = "Список",
-            description = "Список всех пользователей",
-            tags = "Пользователи",
+            description = "Список всех подписок",
+            tags = "Подписки",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = UserNoSubscriptions.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
                             )
                     ),
                     @ApiResponse(
@@ -71,19 +71,19 @@ public class UsersController {
                     )
             }
     )
-    public ResponseEntity<List<UserNoSubscriptions>> getAllUsers(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
-        log.debug("Received request : GET /users with param values: page=" + page + " size=" + size);
-        List<UserNoSubscriptions> all;
+    public ResponseEntity<List<SubscriptionNoUsers>> getAllUsers(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+        log.debug("Received request : GET /subscriptions with param values: page=" + page + " size=" + size);
+        List<SubscriptionNoUsers> all;
         if (page == null || size == null) {
             try {
-                all = usersService.getAll();
+                all = subscriptionsService.getAll();
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return ResponseEntity.internalServerError().build();
             }
         } else if (page > 0 && size > 0) {
             try {
-                all = usersService.getAll(page, size);
+                all = subscriptionsService.getAll(page, size);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return ResponseEntity.internalServerError().build();
