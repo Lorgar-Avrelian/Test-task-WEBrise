@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.service.UsersService;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -295,5 +297,107 @@ public class UsersController {
         }
         if (userDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/{id}/subscriptions")
+    @Operation(
+            summary = "Подписки",
+            description = "Найти подписки пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<Collection<SubscriptionNoUsers>> readUserSubscriptions(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
+        log.debug("Received request : GET /users/" + id + "/subscriptions");
+        if (id <= 0) return ResponseEntity.badRequest().build();
+        Collection<SubscriptionNoUsers> subscriptions;
+        try {
+            subscriptions = usersService.readUserSubscriptions(id);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (subscriptions == null || subscriptions.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(subscriptions);
+    }
+
+    @PostMapping(path = "/{id}/subscriptions")
+    @Operation(
+            summary = "Подписать",
+            description = "Подписать пользователя на подписку",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<UserDTO> createUserSubscription(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody SubscriptionNoUsers subscription) {
+        log.debug("Received request : POST /users/" + id + "/subscriptions with param values: subscription=" + subscription);
+        if (id <= 0) return ResponseEntity.badRequest().build();
+        UserDTO userDTO;
+        try {
+            userDTO = usersService.createUserSubscription(id, subscription);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (userDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userDTO);
     }
 }

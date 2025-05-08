@@ -4,6 +4,7 @@ import lorgar.avrelian.testtaskwebrise.dao.DataValues;
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.SubscriptionData;
 import lorgar.avrelian.testtaskwebrise.dao.User;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 import lorgar.avrelian.testtaskwebrise.repository.DataValuesRepository;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsDataRepository;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsRepository;
@@ -83,5 +84,22 @@ public class ManageServiceImpl implements ManageService {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public boolean createUserSubscription(User user, SubscriptionNoUsers subscription) {
+        Subscription currentSubscription = subscriptionsRepository.findSubscriptionByIdAndTitleIgnoreCaseAndTariffIgnoreCaseAndDescriptionIgnoreCase(subscription.getId(), subscription.getTitle(), subscription.getTariff(), subscription.getDescription()).orElse(null);
+        if (currentSubscription == null) return true;
+        SubscriptionData subscriptionData = new SubscriptionData();
+        subscriptionData.setSubscription(currentSubscription);
+        subscriptionData.setUser(user);
+        SubscriptionData saved;
+        try {
+            saved = subscriptionsDataRepository.save(subscriptionData);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return saved == null;
     }
 }

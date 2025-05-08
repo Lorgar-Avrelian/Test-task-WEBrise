@@ -2,6 +2,8 @@ package lorgar.avrelian.testtaskwebrise.service;
 
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.User;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 
 import java.util.Collection;
 
@@ -35,4 +37,14 @@ public interface ManageService {
      * @throws RuntimeException if no DB connection
      */
     void deleteSubscription(Subscription subscription);
+
+    /**
+     * Method for adding user subscription to DB by ID
+     *
+     * @param user         {@link User} entity of user
+     * @param subscription {@link SubscriptionNoUsers} entity of new user {@link Subscription}
+     * @return {@link UserDTO} of saved {@link User}
+     * @throws RuntimeException if no DB connection
+     */
+    boolean createUserSubscription(User user, SubscriptionNoUsers subscription);
 }

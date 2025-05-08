@@ -3,8 +3,10 @@ package lorgar.avrelian.testtaskwebrise.service;
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.User;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
+import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
 import lorgar.avrelian.testtaskwebrise.mapper.UserMapper;
 import lorgar.avrelian.testtaskwebrise.repository.UsersRepository;
 import org.slf4j.Logger;
@@ -29,15 +31,18 @@ public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
     private final ManageService manageService;
+    private final SubscriptionMapper subscriptionMapper;
 
     public UsersServiceImpl(
             UsersRepository usersRepository,
             UserMapper userMapper,
-            @Qualifier(value = "manageServiceImpl") ManageService manageService
+            @Qualifier(value = "manageServiceImpl") ManageService manageService,
+            SubscriptionMapper subscriptionMapper
     ) {
         this.usersRepository = usersRepository;
         this.userMapper = userMapper;
         this.manageService = manageService;
+        this.subscriptionMapper = subscriptionMapper;
     }
 
     @Override
@@ -139,5 +144,26 @@ public class UsersServiceImpl implements UsersService {
             throw new RuntimeException(e);
         }
         return userMapper.userToUserDTO(currentUser, userSubscriptions);
+    }
+
+    @Override
+    public Collection<SubscriptionNoUsers> readUserSubscriptions(Long id) {
+        if (readUser(id) == null) return null;
+        User currentUser = usersRepository.findById(id).get();
+        Collection<Subscription> userSubscriptions = manageService.getUserSubscriptions(currentUser);
+        Collection<SubscriptionNoUsers> result = new ArrayList<>();
+        for (Subscription subscription : userSubscriptions) {
+            result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
+        }
+        return result;
+    }
+
+    @Override
+    public UserDTO createUserSubscription(Long id, SubscriptionNoUsers subscription) {
+        if (readUser(id) == null) return null;
+        User user = usersRepository.findById(id).get();
+        boolean failed = manageService.createUserSubscription(user, subscription);
+        if (failed) return null;
+        return userMapper.userToUserDTO(user, manageService.getUserSubscriptions(user));
     }
 }

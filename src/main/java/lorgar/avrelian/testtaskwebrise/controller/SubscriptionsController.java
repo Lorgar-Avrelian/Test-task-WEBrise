@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
-import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.service.SubscriptionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

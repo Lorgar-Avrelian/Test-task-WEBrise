@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface SubscriptionsRepository extends JpaRepository<Subscription, Long> {
     Optional<Subscription> findSubscriptionByTitleIgnoreCaseAndTariffIgnoreCase(String title, String tariff);
+
+    Optional<Subscription> findSubscriptionByIdAndTitleIgnoreCaseAndTariffIgnoreCaseAndDescriptionIgnoreCase(Long id, String title, String tariff, String description);
 }
