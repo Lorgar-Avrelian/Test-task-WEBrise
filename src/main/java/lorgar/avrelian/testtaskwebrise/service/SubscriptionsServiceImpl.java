@@ -1,6 +1,7 @@
 package lorgar.avrelian.testtaskwebrise.service;
 
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
+import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Victor Tokovenko
@@ -60,5 +62,19 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
         }
         return result;
+    }
+
+    @Override
+    public SubscriptionNoUsers createSubscription(NewSubscriptionDTO subscription) {
+        Optional<Subscription> optional = subscriptionsRepository.findByTitleIgnoreCaseAndTariffIgnoreCase(subscription.getTitle(), subscription.getTariff());
+        if (optional.isPresent()) return null;
+        SubscriptionNoUsers subscriptionNoUsers;
+        try {
+            subscriptionNoUsers = subscriptionMapper.subscriptionToSubscriptionNoUsers(subscriptionsRepository.save(subscriptionMapper.newSubscriptionDtoToSubscription(subscription)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return subscriptionNoUsers;
     }
 }

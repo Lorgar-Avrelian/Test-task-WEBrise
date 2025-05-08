@@ -4,9 +4,12 @@ import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * @author Victor Tokovenko
  */
 @Repository
 public interface SubscriptionsRepository extends JpaRepository<Subscription, Long> {
+    Optional<Subscription> findByTitleIgnoreCaseAndTariffIgnoreCase(String title, String tariff);
 }

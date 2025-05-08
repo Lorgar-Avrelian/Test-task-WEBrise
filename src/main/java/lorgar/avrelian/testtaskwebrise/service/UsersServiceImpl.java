@@ -1,6 +1,7 @@
 package lorgar.avrelian.testtaskwebrise.service;
 
 import lorgar.avrelian.testtaskwebrise.dao.User;
+import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.mapper.UserMapper;
 import lorgar.avrelian.testtaskwebrise.repository.UsersRepository;
@@ -60,5 +61,25 @@ public class UsersServiceImpl implements UsersService {
             result.add(userMapper.userToUserNoSubscriptions(user));
         }
         return result;
+    }
+
+    @Override
+    public UserNoSubscriptions createUser(NewUserDTO user) {
+        List<User> byLogin;
+        try {
+            byLogin = usersRepository.findByLogin(user.getLogin());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        if (!byLogin.isEmpty()) return null;
+        UserNoSubscriptions userNoSubscriptions;
+        try {
+            userNoSubscriptions = userMapper.userToUserNoSubscriptions(usersRepository.save(userMapper.newUserDtoToUser(user)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return userNoSubscriptions;
     }
 }

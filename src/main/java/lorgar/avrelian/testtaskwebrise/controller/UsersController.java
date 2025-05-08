@@ -1,11 +1,13 @@
 package lorgar.avrelian.testtaskwebrise.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.service.UsersService;
 import org.slf4j.Logger;
@@ -13,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,7 +29,9 @@ public class UsersController {
     private final Logger log = LoggerFactory.getLogger(UsersController.class);
     private final UsersService usersService;
 
-    public UsersController(@Qualifier(value = "usersServiceImpl") UsersService usersService) {
+    public UsersController(
+            @Qualifier(value = "usersServiceImpl") UsersService usersService
+    ) {
         this.usersService = usersService;
     }
 
@@ -71,10 +72,12 @@ public class UsersController {
                     )
             }
     )
-    public ResponseEntity<List<UserNoSubscriptions>> getAllUsers(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    public ResponseEntity<List<UserNoSubscriptions>> getAllUsers(
+            @RequestParam(required = false) @Parameter(description = "Номер страницы") Integer page,
+            @RequestParam(required = false) @Parameter(description = "Размер страницы") Integer size) {
         log.debug("Received request : GET /users with param values: page=" + page + " size=" + size);
         List<UserNoSubscriptions> all;
-        if (page == null || size == null) {
+        if (page == null && size == null) {
             try {
                 all = usersService.getAll();
             } catch (Exception e) {
@@ -96,5 +99,48 @@ public class UsersController {
         } else {
             return ResponseEntity.ok(all);
         }
+    }
+
+    @PostMapping
+    @Operation(
+            summary = "Создать",
+            description = "Создать пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserNoSubscriptions.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<UserNoSubscriptions> createUser(@RequestBody NewUserDTO user) {
+        log.debug("Received request : POST /users with param values: user=" + user);
+        UserNoSubscriptions userNoSubscriptions;
+        try {
+            userNoSubscriptions = usersService.createUser(user);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (userNoSubscriptions == null) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(userNoSubscriptions);
     }
 }
