@@ -1,5 +1,6 @@
 package lorgar.avrelian.testtaskwebrise.service;
 
+import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.User;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
@@ -12,14 +13,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Victor Tokovenko
  */
 @Service
+@Transactional
 public class UsersServiceImpl implements UsersService {
     private final Logger log = LoggerFactory.getLogger(UsersServiceImpl.class);
     private final UsersRepository usersRepository;
@@ -73,14 +77,14 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public UserNoSubscriptions createUser(NewUserDTO user) {
-        User byLogin;
+        User userByLogin;
         try {
-            byLogin = usersRepository.findUserByLogin(user.getLogin()).orElse(null);
+            userByLogin = usersRepository.findUserByLogin(user.getLogin()).orElse(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-        if (byLogin != null) return null;
+        if (userByLogin != null) return null;
         UserNoSubscriptions userNoSubscriptions;
         try {
             userNoSubscriptions = userMapper.userToUserNoSubscriptions(usersRepository.save(userMapper.newUserDtoToUser(user)));
@@ -103,5 +107,22 @@ public class UsersServiceImpl implements UsersService {
             throw new RuntimeException(e);
         }
         return userDTO;
+    }
+
+    @Override
+    public UserDTO putUser(Long id, NewUserDTO user) {
+        if (readUser(id) == null) return null;
+        User currentUser = usersRepository.findById(id).get();
+        currentUser.setLogin(user.getLogin());
+        currentUser.setName(user.getName());
+        currentUser.setSurname(user.getSurname());
+        User savedUser;
+        try {
+            savedUser = usersRepository.save(currentUser);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return userMapper.userToUserDTO(savedUser, manageService.getUserSubscriptions(currentUser));
     }
 }

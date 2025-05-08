@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author Victor Tokovenko
  */
 @Service
+@Transactional
 public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final Logger log = LoggerFactory.getLogger(SubscriptionsServiceImpl.class);
     private final SubscriptionsRepository subscriptionsRepository;
@@ -88,5 +90,22 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         }
         if (subscription == null) return null;
         return subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription);
+    }
+
+    @Override
+    public SubscriptionNoUsers putSubscription(Long id, NewSubscriptionDTO subscription) {
+        if (readSubscription(id) == null) return null;
+        Subscription current = subscriptionsRepository.findById(id).get();
+        current.setTitle(subscription.getTitle());
+        current.setTariff(subscription.getTariff());
+        current.setDescription(subscription.getDescription());
+        Subscription saved;
+        try {
+            saved = subscriptionsRepository.save(current);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return subscriptionMapper.subscriptionToSubscriptionNoUsers(saved);
     }
 }

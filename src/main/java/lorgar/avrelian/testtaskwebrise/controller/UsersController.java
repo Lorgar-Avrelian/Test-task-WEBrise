@@ -195,4 +195,55 @@ public class UsersController {
         if (userDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userDTO);
     }
+
+    @PutMapping(path = "/{id}")
+    @Operation(
+            summary = "Обновить",
+            description = "Обновить данные пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<UserDTO> putUser(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody NewUserDTO user) {
+        log.debug("Received request : PUT /users/" + id + " with param values: user=" + user);
+        if (id <= 0) return ResponseEntity.badRequest().build();
+        UserDTO userDTO;
+        try {
+            userDTO = usersService.putUser(id, user);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (userDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userDTO);
+    }
 }

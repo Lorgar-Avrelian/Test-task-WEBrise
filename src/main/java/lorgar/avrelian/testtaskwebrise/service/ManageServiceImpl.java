@@ -9,6 +9,7 @@ import lorgar.avrelian.testtaskwebrise.repository.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author Victor Tokovenko
  */
 @Service
+@Transactional
 public class ManageServiceImpl implements ManageService {
     private final Logger log = LoggerFactory.getLogger(ManageServiceImpl.class);
     private final SubscriptionsDataRepository subscriptionsDataRepository;

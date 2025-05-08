@@ -47,4 +47,14 @@ public interface SubscriptionsService {
      * @throws RuntimeException if no DB connection
      */
     SubscriptionNoUsers readSubscription(Long id);
+
+    /**
+     * Method for getting subscription from DB by ID
+     *
+     * @param subscription {@link NewSubscriptionDTO} of the new subscription
+     * @param id           {@link Long} value of subscription ID
+     * @return {@link SubscriptionNoUsers} of {@link Subscription}
+     * @throws RuntimeException if no DB connection
+     */
+    SubscriptionNoUsers putSubscription(Long id, NewSubscriptionDTO subscription);
 }

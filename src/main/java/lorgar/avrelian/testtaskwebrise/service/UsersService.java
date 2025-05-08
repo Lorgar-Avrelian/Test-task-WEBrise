@@ -48,4 +48,14 @@ public interface UsersService {
      * @throws RuntimeException if no DB connection
      */
     UserDTO readUser(Long id);
+
+    /**
+     * Method for getting user from DB by ID
+     *
+     * @param user {@link NewUserDTO} of a new user
+     * @param id   {@link Long} value of user ID
+     * @return {@link UserDTO} of {@link User}
+     * @throws RuntimeException if no DB connection
+     */
+    UserDTO putUser(Long id, NewUserDTO user);
 }
