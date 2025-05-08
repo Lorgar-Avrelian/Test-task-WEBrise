@@ -1,47 +1,38 @@
 package lorgar.avrelian.testtaskwebrise.dao;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
  * @author Victor Tokovenko
  */
-@Schema(title = "Подписка", description = "Модель подписки")
 @Entity
 @Table(name = "subscriptions")
 public class Subscription {
-    @Schema(title = "ID", description = "ID подписки", defaultValue = "1", required = true, minimum = "1", maximum = "9223372036854775807")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
-    @Schema(title = "Название", description = "Название подписки", defaultValue = "Название", required = true, minLength = 2, maxLength = 30)
     @Column(name = "title", nullable = false, length = 30)
     private String title;
-    @Schema(title = "Описание", description = "Описание подписки", defaultValue = "Описание")
     @Column(name = "description")
     private String description;
-    @Schema(title = "Тариф", description = "Тарифный план", defaultValue = "Тарифный план", minLength = 2, maxLength = 30)
     @Column(name = "tariff", nullable = false, length = 30)
     private String tariff;
-    @Schema(title = "Пользователи", description = "Пользователи подписки", defaultValue = "null")
-    @ManyToMany
-    @JoinTable(name = "users_subscriptions", joinColumns = @JoinColumn(name = "subscriptions_id"), inverseJoinColumns = @JoinColumn(name = "users_id"))
-    private List<User> users;
+    @OneToMany(mappedBy = "subscription")
+    private Collection<SubscriptionData> subscriptionData;
 
     public Subscription() {
     }
 
-    public Subscription(Long id, String title, String description, String tariff, List<User> users) {
+    public Subscription(Long id, String title, String description, String tariff, Collection<SubscriptionData> subscriptionData) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tariff = tariff;
-        this.users = users;
+        this.subscriptionData = subscriptionData;
     }
 
     public Long getId() {
@@ -76,25 +67,34 @@ public class Subscription {
         this.tariff = tariff;
     }
 
-    @JsonBackReference
-    public List<User> getUsers() {
-        return users;
+    public Collection<SubscriptionData> getSubscriptionData() {
+        return subscriptionData;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setSubscriptionData(Collection<SubscriptionData> subscriptionData) {
+        this.subscriptionData = subscriptionData;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Subscription that = (Subscription) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(tariff, that.tariff) && Objects.equals(users, that.users);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(tariff, that.tariff) && Objects.equals(subscriptionData, that.subscriptionData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, tariff, users);
+        return Objects.hash(id, title, description, tariff, subscriptionData);
     }
 
+    @Override
+    public String toString() {
+        return "Subscription{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", tariff='" + tariff + '\'' +
+                ", subscriptionData=" + subscriptionData +
+                '}';
+    }
 }
