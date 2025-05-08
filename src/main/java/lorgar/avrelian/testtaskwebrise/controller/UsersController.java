@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
+import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.service.UsersService;
 import org.slf4j.Logger;
@@ -73,8 +74,8 @@ public class UsersController {
             }
     )
     public ResponseEntity<List<UserNoSubscriptions>> getAllUsers(
-            @RequestParam(required = false) @Parameter(description = "Номер страницы") Integer page,
-            @RequestParam(required = false) @Parameter(description = "Размер страницы") Integer size) {
+            @RequestParam(required = false) @Parameter(description = "Номер страницы", example = "1") Integer page,
+            @RequestParam(required = false) @Parameter(description = "Размер страницы", example = "1") Integer size) {
         log.debug("Received request : GET /users with param values: page=" + page + " size=" + size);
         List<UserNoSubscriptions> all;
         if (page == null && size == null) {
@@ -84,15 +85,15 @@ public class UsersController {
                 log.error(e.getMessage());
                 return ResponseEntity.internalServerError().build();
             }
-        } else if (page > 0 && size > 0) {
+        } else if (page == null || size == null || page <= 0 || size <= 0) {
+            return ResponseEntity.badRequest().build();
+        } else {
             try {
                 all = usersService.getAll(page, size);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return ResponseEntity.internalServerError().build();
             }
-        } else {
-            return ResponseEntity.badRequest().build();
         }
         if (all.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -142,5 +143,56 @@ public class UsersController {
         }
         if (userNoSubscriptions == null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(userNoSubscriptions);
+    }
+
+    @GetMapping(path = "/{id}")
+    @Operation(
+            summary = "Найти",
+            description = "Найти пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<UserDTO> readUser(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
+        log.debug("Received request : GET /users/" + id);
+        if (id <= 0) return ResponseEntity.badRequest().build();
+        UserDTO userDTO;
+        try {
+            userDTO = usersService.readUser(id);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (userDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userDTO);
     }
 }

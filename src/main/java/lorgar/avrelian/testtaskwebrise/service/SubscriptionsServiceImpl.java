@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Victor Tokovenko
@@ -66,8 +65,8 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     @Override
     public SubscriptionNoUsers createSubscription(NewSubscriptionDTO subscription) {
-        Optional<Subscription> optional = subscriptionsRepository.findByTitleIgnoreCaseAndTariffIgnoreCase(subscription.getTitle(), subscription.getTariff());
-        if (optional.isPresent()) return null;
+        Subscription optional = subscriptionsRepository.findSubscriptionByTitleIgnoreCaseAndTariffIgnoreCase(subscription.getTitle(), subscription.getTariff()).orElse(null);
+        if (optional == null) return null;
         SubscriptionNoUsers subscriptionNoUsers;
         try {
             subscriptionNoUsers = subscriptionMapper.subscriptionToSubscriptionNoUsers(subscriptionsRepository.save(subscriptionMapper.newSubscriptionDtoToSubscription(subscription)));
@@ -76,5 +75,18 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         return subscriptionNoUsers;
+    }
+
+    @Override
+    public SubscriptionNoUsers readSubscription(Long id) {
+        Subscription subscription;
+        try {
+            subscription = subscriptionsRepository.findById(id).orElse(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        if (subscription == null) return null;
+        return subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription);
     }
 }
