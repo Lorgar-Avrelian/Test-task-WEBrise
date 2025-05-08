@@ -15,7 +15,7 @@ public class DataValues {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription")
+    @JoinColumn(name = "subscription_id")
     private SubscriptionData subscription;
     @Column(name = "key", nullable = false)
     private String key;

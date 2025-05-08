@@ -19,7 +19,7 @@ public class Subscription {
     private String title;
     @Column(name = "description")
     private String description;
-    @Column(name = "tariff", nullable = false, length = 30)
+    @Column(name = "tariff", length = 30)
     private String tariff;
     @OneToMany(mappedBy = "subscription")
     private Collection<SubscriptionData> subscriptionData;

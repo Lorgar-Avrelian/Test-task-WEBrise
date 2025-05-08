@@ -16,12 +16,12 @@ public class SubscriptionData {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
-    @OneToMany(mappedBy = "subscription_data")
+    @OneToMany(mappedBy = "subscription")
     private Collection<DataValues> data;
 
     public SubscriptionData() {
