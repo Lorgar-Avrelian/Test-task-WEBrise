@@ -400,4 +400,55 @@ public class UsersController {
         if (userDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userDTO);
     }
+
+    @DeleteMapping(path = "/{id}/subscriptions/{sub_id}")
+    @Operation(
+            summary = "Отписать",
+            description = "Отписать пользователя от подписки",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<UserDTO> deleteUserSubscription(@PathVariable(name = "id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long userId, @PathVariable(name = "sub_id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long subId) {
+        log.debug("Received request : DELETE /users/" + userId + "/subscriptions/" + subId);
+        if (userId <= 0 || subId <= 0) return ResponseEntity.badRequest().build();
+        UserDTO userDTO;
+        try {
+            userDTO = usersService.deleteUserSubscription(userId, subId);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (userDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userDTO);
+    }
 }

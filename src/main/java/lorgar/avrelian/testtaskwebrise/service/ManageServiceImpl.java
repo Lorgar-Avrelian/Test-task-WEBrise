@@ -89,7 +89,7 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public boolean createUserSubscription(User user, SubscriptionNoUsers subscription) {
         Subscription currentSubscription = subscriptionsRepository.findSubscriptionByIdAndTitleIgnoreCaseAndTariffIgnoreCaseAndDescriptionIgnoreCase(subscription.getId(), subscription.getTitle(), subscription.getTariff(), subscription.getDescription()).orElse(null);
-        if (currentSubscription == null) return true;
+        if (currentSubscription == null || !subscriptionsDataRepository.findAllByUserAndSubscription(user, currentSubscription).isEmpty()) return true;
         SubscriptionData subscriptionData = new SubscriptionData();
         subscriptionData.setSubscription(currentSubscription);
         subscriptionData.setUser(user);
@@ -101,5 +101,24 @@ public class ManageServiceImpl implements ManageService {
             throw new RuntimeException(e);
         }
         return saved == null;
+    }
+
+    @Override
+    public boolean deleteUserSubscription(User user, Long id) {
+        Subscription subscription = subscriptionsRepository.findById(id).orElse(null);
+        if (subscription == null) return true;
+        List<SubscriptionData> data = subscriptionsDataRepository.findAllByUserAndSubscription(user, subscription);
+        if (data == null || data.isEmpty()) return true;
+        data.forEach(subscriptionData -> {
+            Collection<DataValues> dataValues = subscriptionData.getData();
+            try {
+                dataValuesRepository.deleteAll(dataValues);
+                subscriptionsDataRepository.delete(subscriptionData);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+        return false;
     }
 }

@@ -14,5 +14,8 @@ import java.util.List;
 @Repository
 public interface SubscriptionsDataRepository extends JpaRepository<SubscriptionData, Long> {
     List<SubscriptionData> findAllByUser(User user);
+
     List<SubscriptionData> findAllBySubscription(Subscription subscription);
+
+    List<SubscriptionData> findAllByUserAndSubscription(User user, Subscription subscription);
 }

@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -294,5 +295,48 @@ public class SubscriptionsController {
         }
         if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/top")
+    @Operation(
+            summary = "Топ",
+            description = "Топ 3 подписки",
+            tags = "Подписки",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<Collection<SubscriptionNoUsers>> readSubscriptionsTop() {
+        log.debug("Received request : GET /subscriptions/top");
+        Collection<SubscriptionNoUsers> subscriptionNoUsers;
+        try {
+            subscriptionNoUsers = subscriptionsService.readSubscriptionsTop();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(subscriptionNoUsers);
     }
 }

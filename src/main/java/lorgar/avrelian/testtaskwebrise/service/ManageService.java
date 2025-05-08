@@ -47,4 +47,14 @@ public interface ManageService {
      * @throws RuntimeException if no DB connection
      */
     boolean createUserSubscription(User user, SubscriptionNoUsers subscription);
+
+    /**
+     * Method for deleting {@link User} subscription from DB by ID of subscription
+     *
+     * @param user {@link User} entity of user
+     * @param id   {@link Long} value of subscription ID
+     * @return {@link UserDTO} of saved {@link User}
+     * @throws RuntimeException if no DB connection
+     */
+    boolean deleteUserSubscription(User user, Long id);
 }

@@ -4,6 +4,7 @@ import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,4 +67,12 @@ public interface SubscriptionsService {
      * @throws RuntimeException if no DB connection
      */
     SubscriptionNoUsers deleteSubscription(Long id);
+
+    /**
+     * Method for receiving the Subscription Top 3
+     *
+     * @return {@link Collection} of {@link SubscriptionNoUsers} entities of top 3 {@link Subscription}'s
+     * @throws RuntimeException if no DB connection
+     */
+    Collection<SubscriptionNoUsers> readSubscriptionsTop();
 }

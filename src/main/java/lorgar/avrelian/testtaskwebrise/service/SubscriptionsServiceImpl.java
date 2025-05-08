@@ -1,9 +1,11 @@
 package lorgar.avrelian.testtaskwebrise.service;
 
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
+import lorgar.avrelian.testtaskwebrise.dao.SubscriptionData;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
 import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
+import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsDataRepository;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Victor Tokovenko
@@ -26,14 +28,16 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final SubscriptionsRepository subscriptionsRepository;
     private final SubscriptionMapper subscriptionMapper;
     private final ManageService manageService;
+    private final SubscriptionsDataRepository subscriptionsDataRepository;
 
     public SubscriptionsServiceImpl(
             SubscriptionsRepository subscriptionsRepository,
             SubscriptionMapper subscriptionMapper,
-            @Qualifier(value = "manageServiceImpl") ManageService manageService) {
+            @Qualifier(value = "manageServiceImpl") ManageService manageService, SubscriptionsDataRepository subscriptionsDataRepository) {
         this.subscriptionsRepository = subscriptionsRepository;
         this.subscriptionMapper = subscriptionMapper;
         this.manageService = manageService;
+        this.subscriptionsDataRepository = subscriptionsDataRepository;
     }
 
     @Override
@@ -127,5 +131,38 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         return subscriptionMapper.subscriptionToSubscriptionNoUsers(current);
+    }
+
+    @Override
+    public Collection<SubscriptionNoUsers> readSubscriptionsTop() {
+        List<Subscription> subscriptions;
+        try {
+            subscriptions = subscriptionsRepository.findAll();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        if (subscriptions == null || subscriptions.isEmpty()) return new ArrayList<>();
+        Collection<SubscriptionNoUsers> result = new ArrayList<>();
+        if (subscriptions.size() <= 3) {
+            for (Subscription subscription : subscriptions) {
+                result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
+            }
+        } else {
+            Map<Subscription, Integer> counts = new HashMap<>();
+            for (Subscription subscription : subscriptions) {
+                List<SubscriptionData> allBySubscription = subscriptionsDataRepository.findAllBySubscription(subscription);
+                counts.put(subscription, allBySubscription.size());
+            }
+            List<Subscription> collect = counts.entrySet().stream()
+                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                    .limit(3)
+                    .map(Map.Entry::getKey)
+                    .toList();
+            for (Subscription subscription : collect) {
+                result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
+            }
+        }
+        return result;
     }
 }

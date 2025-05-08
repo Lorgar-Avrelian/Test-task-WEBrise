@@ -89,4 +89,14 @@ public interface UsersService {
      * @throws RuntimeException if no DB connection
      */
     UserDTO createUserSubscription(Long id, SubscriptionNoUsers subscription);
+
+    /**
+     * Method for deleting user subscription from DB by ID's of user and subscription
+     *
+     * @param userId {@link Long} value of user ID
+     * @param subId  {@link Long} value of subscription ID
+     * @return {@link UserDTO} of saved {@link User}
+     * @throws RuntimeException if no DB connection
+     */
+    UserDTO deleteUserSubscription(Long userId, Long subId);
 }

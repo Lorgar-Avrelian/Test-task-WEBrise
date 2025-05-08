@@ -166,4 +166,13 @@ public class UsersServiceImpl implements UsersService {
         if (failed) return null;
         return userMapper.userToUserDTO(user, manageService.getUserSubscriptions(user));
     }
+
+    @Override
+    public UserDTO deleteUserSubscription(Long userId, Long subId) {
+        if (readUser(userId) == null) return null;
+        User user = usersRepository.findById(userId).get();
+        boolean failed = manageService.deleteUserSubscription(user, subId);
+        if (failed) return null;
+        return userMapper.userToUserDTO(user, manageService.getUserSubscriptions(user));
+    }
 }
