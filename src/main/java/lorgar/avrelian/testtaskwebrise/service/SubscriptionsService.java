@@ -2,7 +2,7 @@ package lorgar.avrelian.testtaskwebrise.service;
 
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
-import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionDTO;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,63 +16,63 @@ public interface SubscriptionsService {
     /**
      * Method for getting list of all subscriptions from DB
      *
-     * @return {@link List} of {@link SubscriptionNoUsers} of all {@link Subscription}'s
+     * @return {@link List} of {@link SubscriptionDTO} of all {@link Subscription}'s
      * @throws RuntimeException if no DB connection
      */
-    List<SubscriptionNoUsers> getAll();
+    List<SubscriptionDTO> getAll();
 
     /**
      * Method for getting pageable list of subscriptions from DB
      *
      * @param page page number
      * @param size page records count
-     * @return paginal {@link List} of {@link SubscriptionNoUsers} of {@link Subscription}'s
+     * @return paginal {@link List} of {@link SubscriptionDTO} of {@link Subscription}'s
      * @throws RuntimeException if no DB connection
      */
-    List<SubscriptionNoUsers> getAll(int page, int size);
+    List<SubscriptionDTO> getAll(int page, int size);
 
     /**
      * Method for creating new subscription in DB
      *
      * @param subscription {@link NewSubscriptionDTO} of the new subscription
-     * @return {@link SubscriptionNoUsers} of created {@link Subscription}
+     * @return {@link SubscriptionDTO} of created {@link Subscription}
      * @throws RuntimeException if no DB connection
      */
-    SubscriptionNoUsers createSubscription(NewSubscriptionDTO subscription);
+    SubscriptionDTO createSubscription(NewSubscriptionDTO subscription);
 
     /**
      * Method for getting subscription from DB by ID
      *
      * @param id {@link Long} value of subscription ID
-     * @return {@link SubscriptionNoUsers} of {@link Subscription}
+     * @return {@link SubscriptionDTO} of {@link Subscription}
      * @throws RuntimeException if no DB connection
      */
-    SubscriptionNoUsers readSubscription(Long id);
+    SubscriptionDTO readSubscription(Long id);
 
     /**
      * Method for updating subscription data at DB by ID
      *
      * @param subscription {@link NewSubscriptionDTO} of the new subscription
      * @param id           {@link Long} value of subscription ID
-     * @return {@link SubscriptionNoUsers} of {@link Subscription}
+     * @return {@link SubscriptionDTO} of {@link Subscription}
      * @throws RuntimeException if no DB connection
      */
-    SubscriptionNoUsers putSubscription(Long id, NewSubscriptionDTO subscription);
+    SubscriptionDTO putSubscription(Long id, NewSubscriptionDTO subscription);
 
     /**
      * Method for deleting subscription from DB by ID
      *
      * @param id {@link Long} value of subscription ID
-     * @return {@link SubscriptionNoUsers} of {@link Subscription}
+     * @return {@link SubscriptionDTO} of {@link Subscription}
      * @throws RuntimeException if no DB connection
      */
-    SubscriptionNoUsers deleteSubscription(Long id);
+    SubscriptionDTO deleteSubscription(Long id);
 
     /**
      * Method for receiving the Subscription Top 3
      *
-     * @return {@link Collection} of {@link SubscriptionNoUsers} entities of top 3 {@link Subscription}'s
+     * @return {@link Collection} of {@link SubscriptionDTO} entities of top 3 {@link Subscription}'s
      * @throws RuntimeException if no DB connection
      */
-    Collection<SubscriptionNoUsers> readSubscriptionsTop();
+    Collection<SubscriptionDTO> readSubscriptionsTop();
 }

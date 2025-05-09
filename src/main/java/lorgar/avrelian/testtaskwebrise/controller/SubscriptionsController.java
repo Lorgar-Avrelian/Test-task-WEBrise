@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
-import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.service.SubscriptionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class SubscriptionsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionDTO.class))
                             )
                     ),
                     @ApiResponse(
@@ -73,11 +73,11 @@ public class SubscriptionsController {
                     )
             }
     )
-    public ResponseEntity<List<SubscriptionNoUsers>> getAllUsers(
+    public ResponseEntity<List<SubscriptionDTO>> getAllUsers(
             @RequestParam(required = false) @Parameter(description = "Номер страницы", example = "1") Integer page,
             @RequestParam(required = false) @Parameter(description = "Размер страницы", example = "1") Integer size) {
         log.debug("Received request : GET /subscriptions with param values: page=" + page + " size=" + size);
-        List<SubscriptionNoUsers> all;
+        List<SubscriptionDTO> all;
         if (page == null && size == null) {
             try {
                 all = subscriptionsService.getAll();
@@ -113,7 +113,7 @@ public class SubscriptionsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = SubscriptionNoUsers.class)
+                                    schema = @Schema(implementation = SubscriptionDTO.class)
                             )
                     ),
                     @ApiResponse(
@@ -132,17 +132,17 @@ public class SubscriptionsController {
                     )
             }
     )
-    public ResponseEntity<SubscriptionNoUsers> createSubscription(@RequestBody NewSubscriptionDTO subscription) {
+    public ResponseEntity<SubscriptionDTO> createSubscription(@RequestBody NewSubscriptionDTO subscription) {
         log.debug("Received request : POST /subscriptions with param values: subscription=" + subscription);
-        SubscriptionNoUsers subscriptionNoUsers;
+        SubscriptionDTO subscriptionDTO;
         try {
-            subscriptionNoUsers = subscriptionsService.createSubscription(subscription);
+            subscriptionDTO = subscriptionsService.createSubscription(subscription);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
-        if (subscriptionNoUsers == null) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(subscriptionNoUsers);
+        if (subscriptionDTO == null) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(subscriptionDTO);
     }
 
     @GetMapping(path = "/{id}")
@@ -156,7 +156,7 @@ public class SubscriptionsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = SubscriptionNoUsers.class)
+                                    schema = @Schema(implementation = SubscriptionDTO.class)
                             )
                     ),
                     @ApiResponse(
@@ -182,18 +182,18 @@ public class SubscriptionsController {
                     )
             }
     )
-    public ResponseEntity<SubscriptionNoUsers> readSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
+    public ResponseEntity<SubscriptionDTO> readSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
         log.debug("Received request : GET /subscriptions/" + id);
         if (id <= 0) return ResponseEntity.badRequest().build();
-        SubscriptionNoUsers subscriptionNoUsers;
+        SubscriptionDTO subscriptionDTO;
         try {
-            subscriptionNoUsers = subscriptionsService.readSubscription(id);
+            subscriptionDTO = subscriptionsService.readSubscription(id);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
-        if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(subscriptionNoUsers);
+        if (subscriptionDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(subscriptionDTO);
     }
 
     @PutMapping(path = "/{id}")
@@ -207,7 +207,7 @@ public class SubscriptionsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = SubscriptionNoUsers.class)
+                                    schema = @Schema(implementation = SubscriptionDTO.class)
                             )
                     ),
                     @ApiResponse(
@@ -233,18 +233,18 @@ public class SubscriptionsController {
                     )
             }
     )
-    public ResponseEntity<SubscriptionNoUsers> putSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody NewSubscriptionDTO subscription) {
+    public ResponseEntity<SubscriptionDTO> putSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody NewSubscriptionDTO subscription) {
         log.debug("Received request : PUT /subscriptions/" + id + " with param values: subscription=" + subscription);
         if (id <= 0) return ResponseEntity.badRequest().build();
-        SubscriptionNoUsers subscriptionNoUsers;
+        SubscriptionDTO subscriptionDTO;
         try {
-            subscriptionNoUsers = subscriptionsService.putSubscription(id, subscription);
+            subscriptionDTO = subscriptionsService.putSubscription(id, subscription);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
-        if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(subscriptionNoUsers);
+        if (subscriptionDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(subscriptionDTO);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -286,14 +286,14 @@ public class SubscriptionsController {
     public ResponseEntity<?> deleteSubscription(@PathVariable @Parameter(description = "ID подписки", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
         log.debug("Received request : DELETE /subscriptions/" + id);
         if (id <= 0) return ResponseEntity.badRequest().build();
-        SubscriptionNoUsers subscriptionNoUsers;
+        SubscriptionDTO subscriptionDTO;
         try {
-            subscriptionNoUsers = subscriptionsService.deleteSubscription(id);
+            subscriptionDTO = subscriptionsService.deleteSubscription(id);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
-        if (subscriptionNoUsers == null) return ResponseEntity.notFound().build();
+        if (subscriptionDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok().build();
     }
 
@@ -308,7 +308,7 @@ public class SubscriptionsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionDTO.class))
                             )
                     ),
                     @ApiResponse(
@@ -327,9 +327,9 @@ public class SubscriptionsController {
                     )
             }
     )
-    public ResponseEntity<Collection<SubscriptionNoUsers>> readSubscriptionsTop() {
+    public ResponseEntity<Collection<SubscriptionDTO>> readSubscriptionsTop() {
         log.debug("Received request : GET /subscriptions/top");
-        Collection<SubscriptionNoUsers> subscriptionNoUsers;
+        Collection<SubscriptionDTO> subscriptionNoUsers;
         try {
             subscriptionNoUsers = subscriptionsService.readSubscriptionsTop();
         } catch (Exception e) {

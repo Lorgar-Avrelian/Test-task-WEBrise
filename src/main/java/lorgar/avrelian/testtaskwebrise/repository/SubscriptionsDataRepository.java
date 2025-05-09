@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Victor Tokovenko
@@ -17,5 +18,5 @@ public interface SubscriptionsDataRepository extends JpaRepository<SubscriptionD
 
     List<SubscriptionData> findAllBySubscription(Subscription subscription);
 
-    List<SubscriptionData> findAllByUserAndSubscription(User user, Subscription subscription);
+    Optional<SubscriptionData> findByUserAndSubscription(User user, Subscription subscription);
 }

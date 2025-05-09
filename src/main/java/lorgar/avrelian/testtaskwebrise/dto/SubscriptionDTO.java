@@ -2,13 +2,12 @@ package lorgar.avrelian.testtaskwebrise.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**
  * @author Victor Tokovenko
  */
-@Schema(title = "Подписка (с пользователями)", description = "Модель возможной подписки с пользователями")
+@Schema(title = "Подписка", description = "Модель возможной подписки")
 public class SubscriptionDTO {
     @Schema(title = "ID", description = "ID возможной подписки", defaultValue = "1", required = true, minimum = "1", maximum = "9223372036854775807")
     private Long id;
@@ -18,18 +17,15 @@ public class SubscriptionDTO {
     private String description;
     @Schema(title = "Тариф", description = "Тарифный план возможной подписки", defaultValue = "Тариф", required = true, minLength = 3, maxLength = 30)
     private String tariff;
-    @Schema(title = "Пользователи", description = "Пользователи данной подписки")
-    private Collection<UserNoSubscriptions> users;
 
     public SubscriptionDTO() {
     }
 
-    public SubscriptionDTO(Long id, String title, String description, String tariff, Collection<UserNoSubscriptions> users) {
+    public SubscriptionDTO(Long id, String title, String description, String tariff) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tariff = tariff;
-        this.users = users;
     }
 
     public Long getId() {
@@ -64,24 +60,16 @@ public class SubscriptionDTO {
         this.tariff = tariff;
     }
 
-    public Collection<UserNoSubscriptions> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<UserNoSubscriptions> users) {
-        this.users = users;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SubscriptionDTO that = (SubscriptionDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(tariff, that.tariff) && Objects.equals(users, that.users);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(tariff, that.tariff);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, tariff, users);
+        return Objects.hash(id, title, description, tariff);
     }
 
     @Override
@@ -91,7 +79,6 @@ public class SubscriptionDTO {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", tariff='" + tariff + '\'' +
-                ", users=" + users +
                 '}';
     }
 }

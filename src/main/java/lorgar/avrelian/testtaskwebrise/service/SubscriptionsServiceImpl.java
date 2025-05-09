@@ -3,7 +3,7 @@ package lorgar.avrelian.testtaskwebrise.service;
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.SubscriptionData;
 import lorgar.avrelian.testtaskwebrise.dto.NewSubscriptionDTO;
-import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsDataRepository;
 import lorgar.avrelian.testtaskwebrise.repository.SubscriptionsRepository;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Victor Tokovenko
@@ -41,7 +40,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public List<SubscriptionNoUsers> getAll() {
+    public List<SubscriptionDTO> getAll() {
         List<Subscription> subscriptions;
         try {
             subscriptions = subscriptionsRepository.findAll();
@@ -50,7 +49,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         if (subscriptions.isEmpty()) return new ArrayList<>();
-        List<SubscriptionNoUsers> result = new ArrayList<>();
+        List<SubscriptionDTO> result = new ArrayList<>();
         for (Subscription subscription : subscriptions) {
             result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
         }
@@ -58,7 +57,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public List<SubscriptionNoUsers> getAll(int page, int size) {
+    public List<SubscriptionDTO> getAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<Subscription> subscriptions;
         try {
@@ -68,7 +67,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         if (subscriptions.getContent().isEmpty()) return new ArrayList<>();
-        List<SubscriptionNoUsers> result = new ArrayList<>();
+        List<SubscriptionDTO> result = new ArrayList<>();
         for (Subscription subscription : subscriptions.getContent()) {
             result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
         }
@@ -76,21 +75,21 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public SubscriptionNoUsers createSubscription(NewSubscriptionDTO subscription) {
+    public SubscriptionDTO createSubscription(NewSubscriptionDTO subscription) {
         Subscription optional = subscriptionsRepository.findSubscriptionByTitleIgnoreCaseAndTariffIgnoreCase(subscription.getTitle(), subscription.getTariff()).orElse(null);
         if (optional != null) return null;
-        SubscriptionNoUsers subscriptionNoUsers;
+        SubscriptionDTO subscriptionDTO;
         try {
-            subscriptionNoUsers = subscriptionMapper.subscriptionToSubscriptionNoUsers(subscriptionsRepository.save(subscriptionMapper.newSubscriptionDtoToSubscription(subscription)));
+            subscriptionDTO = subscriptionMapper.subscriptionToSubscriptionNoUsers(subscriptionsRepository.save(subscriptionMapper.newSubscriptionDtoToSubscription(subscription)));
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-        return subscriptionNoUsers;
+        return subscriptionDTO;
     }
 
     @Override
-    public SubscriptionNoUsers readSubscription(Long id) {
+    public SubscriptionDTO readSubscription(Long id) {
         Subscription subscription;
         try {
             subscription = subscriptionsRepository.findById(id).orElse(null);
@@ -103,7 +102,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public SubscriptionNoUsers putSubscription(Long id, NewSubscriptionDTO subscription) {
+    public SubscriptionDTO putSubscription(Long id, NewSubscriptionDTO subscription) {
         if (readSubscription(id) == null) return null;
         Subscription current = subscriptionsRepository.findById(id).get();
         current.setTitle(subscription.getTitle());
@@ -120,7 +119,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public SubscriptionNoUsers deleteSubscription(Long id) {
+    public SubscriptionDTO deleteSubscription(Long id) {
         if (readSubscription(id) == null) return null;
         Subscription current = subscriptionsRepository.findById(id).get();
         manageService.deleteSubscription(current);
@@ -134,7 +133,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public Collection<SubscriptionNoUsers> readSubscriptionsTop() {
+    public Collection<SubscriptionDTO> readSubscriptionsTop() {
         List<Subscription> subscriptions;
         try {
             subscriptions = subscriptionsRepository.findAll();
@@ -143,7 +142,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             throw new RuntimeException(e);
         }
         if (subscriptions == null || subscriptions.isEmpty()) return new ArrayList<>();
-        Collection<SubscriptionNoUsers> result = new ArrayList<>();
+        Collection<SubscriptionDTO> result = new ArrayList<>();
         if (subscriptions.size() <= 3) {
             for (Subscription subscription : subscriptions) {
                 result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));

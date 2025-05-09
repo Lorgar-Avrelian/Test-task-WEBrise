@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
-import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.service.UsersService;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Victor Tokovenko
@@ -310,7 +311,7 @@ public class UsersController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionNoUsers.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = SubscriptionDTO.class))
                             )
                     ),
                     @ApiResponse(
@@ -336,10 +337,10 @@ public class UsersController {
                     )
             }
     )
-    public ResponseEntity<Collection<SubscriptionNoUsers>> readUserSubscriptions(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
+    public ResponseEntity<Collection<SubscriptionDTO>> readUserSubscriptions(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id) {
         log.debug("Received request : GET /users/" + id + "/subscriptions");
         if (id <= 0) return ResponseEntity.badRequest().build();
-        Collection<SubscriptionNoUsers> subscriptions;
+        Collection<SubscriptionDTO> subscriptions;
         try {
             subscriptions = usersService.readUserSubscriptions(id);
         } catch (Exception e) {
@@ -387,7 +388,7 @@ public class UsersController {
                     )
             }
     )
-    public ResponseEntity<UserDTO> createUserSubscription(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody SubscriptionNoUsers subscription) {
+    public ResponseEntity<UserDTO> createUserSubscription(@PathVariable @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long id, @RequestBody SubscriptionDTO subscription) {
         log.debug("Received request : POST /users/" + id + "/subscriptions with param values: subscription=" + subscription);
         if (id <= 0) return ResponseEntity.badRequest().build();
         UserDTO userDTO;
@@ -450,5 +451,107 @@ public class UsersController {
         }
         if (userDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userDTO);
+    }
+
+    @PutMapping(path = "/{id}/subscriptions/{sub_id}")
+    @Operation(
+            summary = "Данные",
+            description = "Внести/изменить параметры подписки пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<Map<String, String>> putUserSubscriptionData(@PathVariable(name = "id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long userId, @PathVariable(name = "sub_id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long subId, @RequestBody Map<String, String> params) {
+        log.debug("Received request : PUT /users/" + userId + "/subscriptions/" + subId + " with param values: params=" + params);
+        if (userId <= 0 || subId <= 0) return ResponseEntity.badRequest().build();
+        Map<String, String> param;
+        try {
+            param = usersService.putUserSubscriptionData(userId, subId, params);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (param == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(param);
+    }
+
+    @GetMapping(path = "/{id}/subscriptions/{sub_id}/data")
+    @Operation(
+            summary = "Параметры",
+            description = "Посмотреть параметры подписки пользователя",
+            tags = "Пользователи",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = Void.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<Map<String, String>> getUserSubscriptionData(@PathVariable(name = "id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long userId, @PathVariable(name = "sub_id") @Parameter(description = "ID пользователя", required = true, schema = @Schema(implementation = Long.class), example = "1") Long subId) {
+        log.debug("Received request : GET /users/" + userId + "/subscriptions/" + subId + "/data");
+        if (userId <= 0 || subId <= 0) return ResponseEntity.badRequest().build();
+        Map<String, String> param;
+        try {
+            param = usersService.getUserSubscriptionData(userId, subId);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        if (param == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(param);
     }
 }

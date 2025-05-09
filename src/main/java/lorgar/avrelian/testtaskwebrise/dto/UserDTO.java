@@ -19,12 +19,12 @@ public class UserDTO {
     @Schema(title = "Фамилия", description = "Фамилия зарегистрированного пользователя", defaultValue = "Фамилия", required = true, minLength = 3, maxLength = 30)
     private String surname;
     @Schema(title = "Подписки", description = "Подписки пользователя")
-    private Collection<SubscriptionNoUsers> subscriptions;
+    private Collection<SubscriptionDTO> subscriptions;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String login, String name, String surname, Collection<SubscriptionNoUsers> subscriptions) {
+    public UserDTO(Long id, String login, String name, String surname, Collection<SubscriptionDTO> subscriptions) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -64,11 +64,11 @@ public class UserDTO {
         this.surname = surname;
     }
 
-    public Collection<SubscriptionNoUsers> getSubscriptions() {
+    public Collection<SubscriptionDTO> getSubscriptions() {
         return subscriptions;
     }
 
-    public void setSubscriptions(Collection<SubscriptionNoUsers> subscriptions) {
+    public void setSubscriptions(Collection<SubscriptionDTO> subscriptions) {
         this.subscriptions = subscriptions;
     }
 

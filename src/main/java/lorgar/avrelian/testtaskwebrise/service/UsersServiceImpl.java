@@ -3,7 +3,7 @@ package lorgar.avrelian.testtaskwebrise.service;
 import lorgar.avrelian.testtaskwebrise.dao.Subscription;
 import lorgar.avrelian.testtaskwebrise.dao.User;
 import lorgar.avrelian.testtaskwebrise.dto.NewUserDTO;
-import lorgar.avrelian.testtaskwebrise.dto.SubscriptionNoUsers;
+import lorgar.avrelian.testtaskwebrise.dto.SubscriptionDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserDTO;
 import lorgar.avrelian.testtaskwebrise.dto.UserNoSubscriptions;
 import lorgar.avrelian.testtaskwebrise.mapper.SubscriptionMapper;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Victor Tokovenko
@@ -147,11 +148,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Collection<SubscriptionNoUsers> readUserSubscriptions(Long id) {
+    public Collection<SubscriptionDTO> readUserSubscriptions(Long id) {
         if (readUser(id) == null) return null;
         User currentUser = usersRepository.findById(id).get();
         Collection<Subscription> userSubscriptions = manageService.getUserSubscriptions(currentUser);
-        Collection<SubscriptionNoUsers> result = new ArrayList<>();
+        Collection<SubscriptionDTO> result = new ArrayList<>();
         for (Subscription subscription : userSubscriptions) {
             result.add(subscriptionMapper.subscriptionToSubscriptionNoUsers(subscription));
         }
@@ -159,7 +160,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UserDTO createUserSubscription(Long id, SubscriptionNoUsers subscription) {
+    public UserDTO createUserSubscription(Long id, SubscriptionDTO subscription) {
         if (readUser(id) == null) return null;
         User user = usersRepository.findById(id).get();
         boolean failed = manageService.createUserSubscription(user, subscription);
@@ -174,5 +175,19 @@ public class UsersServiceImpl implements UsersService {
         boolean failed = manageService.deleteUserSubscription(user, subId);
         if (failed) return null;
         return userMapper.userToUserDTO(user, manageService.getUserSubscriptions(user));
+    }
+
+    @Override
+    public Map<String, String> putUserSubscriptionData(Long userId, Long subID, Map<String, String> params) {
+        if (readUser(userId) == null) return null;
+        User user = usersRepository.findById(userId).get();
+        return manageService.putUserSubscriptionData(user, subID, params);
+    }
+
+    @Override
+    public Map<String, String> getUserSubscriptionData(Long userId, Long subID) {
+        if (readUser(userId) == null) return null;
+        User user = usersRepository.findById(userId).get();
+        return manageService.getUserSubscriptionData(user, subID);
     }
 }
