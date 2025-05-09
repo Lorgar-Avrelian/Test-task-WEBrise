@@ -23,7 +23,7 @@
         <logback.version>1.5.18</logback.version>
         <slf4j.api.version>2.1.0-alpha1</slf4j.api.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <maven.compiler.version>4.0.0-beta-2</maven.compiler.version>
+        <maven.compiler.version>3.14.0</maven.compiler.version>
     </properties>
     <dependencies>
         <dependency>
