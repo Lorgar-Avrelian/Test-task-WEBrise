@@ -119,7 +119,7 @@
     - информационные:
         * `GET /subscriptions/top` - для получения топ 3 подписок по количеству пользователей.
 
-Описание _API_ можно увидеть после запуска приложения по [адресу](http://localhost:8080/swagger-ui/index.html) в 
+Описание _API_ и _DTO_ можно увидеть после запуска приложения по [адресу](http://localhost:8080/swagger-ui/index.html) в 
 интерфейсе _Swagger UI_.  
 
 ### Применённые технологии:
@@ -129,7 +129,7 @@
 - Spring Web;
 - Spring Data JPA;
 - Swagger UI;
-- PostgreSQl;
+- PostgreSQL;
 - Liquibase;
 - LogBack (SLF4J);
 - Mapstruct;
