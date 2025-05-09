@@ -134,4 +134,3 @@
 - LogBack (SLF4J);
 - Mapstruct;
 - Docker (Docker-compose).
-

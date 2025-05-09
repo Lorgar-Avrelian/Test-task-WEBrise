@@ -1,11 +1,7 @@
 FROM maven:3.9.9-amazoncorretto-17 AS builder
 WORKDIR /opt/app
-COPY docker-compose.yaml ./
-COPY Dockerfile ./
 COPY pom.xml ./
-COPY README.md ./
 COPY ./src ./src
-COPY ./logs ./logs
 RUN mvn clean install -DskipTests
 
 FROM amazoncorretto:17
